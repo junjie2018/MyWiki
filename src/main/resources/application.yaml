@@ -1,0 +1,28 @@
+spring:
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://mariadb-0.mariadb.base.svc.cluster.local:3306/my_wiki
+    username: root
+    password: "0123456"
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:database/scheme.sql
+      data-locations: classpath:database/data.sql
+
+  redis:
+    enable-client: true
+    database: 0
+    host: redis-master-0.redis-headless.base.svc.cluster.local
+    port: 6379
+    password:
+    timeout: 3000
+    lettuce:
+      pool:
+        max-active: 8
+        max-idle: 8
+        max-wait: 60000
+        min-idle: 0
+        test-on-borrow: false
+        test-while-idle: false
+      shutdown-timeout: 100
