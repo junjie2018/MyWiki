@@ -6,7 +6,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import junjie.fun.mywiki.entity.Content;
 import junjie.fun.mywiki.entity.Doc;
-import junjie.fun.mywiki.entity.EBook;
 import junjie.fun.mywiki.exception.BusinessException;
 import junjie.fun.mywiki.mapper.ContentMapper;
 import junjie.fun.mywiki.mapper.DocMapper;
@@ -16,7 +15,7 @@ import junjie.fun.mywiki.request.doc.CreateOrUpdateDocRequest;
 import junjie.fun.mywiki.response.data.DocData;
 import junjie.fun.mywiki.service.DocService;
 import junjie.fun.mywiki.utils.CopyUtils;
-import junjie.fun.mywiki.utils.RequestContext;
+import junjie.fun.mywiki.context.RequestContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
@@ -26,7 +25,6 @@ import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.util.List;
 
-import static junjie.fun.mywiki.constant.code.BusinessCode.DOC_NOT_EXIST;
 import static junjie.fun.mywiki.constant.code.BusinessCode.HAS_ALREADY_VOTE;
 import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
 

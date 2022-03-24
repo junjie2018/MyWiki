@@ -20,7 +20,7 @@ spring:
     port: 6379
     password:
     timeout: 3000
-    lettuce:
+    druid:
       pool:
         max-active: 8
         max-idle: 8
@@ -29,3 +29,7 @@ spring:
         test-on-borrow: false
         test-while-idle: false
       shutdown-timeout: 100
+
+mybatis-plus:
+  configuration:
+     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

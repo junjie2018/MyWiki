@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import junjie.fun.mywiki.entity.User;
 import junjie.fun.mywiki.request.PageRequest;
 import junjie.fun.mywiki.request.condition.PageUserCondition;
-import junjie.fun.mywiki.request.user.CreateOrUpdateUserRequest;
+import junjie.fun.mywiki.request.user_admin.CreateOrUpdateUserRequest;
 import junjie.fun.mywiki.request.user.LoginRequest;
 import junjie.fun.mywiki.request.user.ResetPasswordRequest;
 import junjie.fun.mywiki.response.data.LoginData;
@@ -18,7 +18,7 @@ public interface UserService extends IService<User> {
 
     Long createOrUpdateUser(CreateOrUpdateUserRequest request);
 
-    Long resetPassword(ResetPasswordRequest request);
+    void changePassword(ResetPasswordRequest request);
 
     Page<UserData> pageUser(PageRequest<PageUserCondition> request);
 }

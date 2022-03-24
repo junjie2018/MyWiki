@@ -1,4 +1,4 @@
-package junjie.fun.mywiki.utils;
+package junjie.fun.mywiki.context;
 
 public class RequestContext {
     private static ThreadLocal<String> remoteAddress = new ThreadLocal<>();

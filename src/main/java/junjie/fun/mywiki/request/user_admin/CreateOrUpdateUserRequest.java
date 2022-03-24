@@ -1,4 +1,4 @@
-package junjie.fun.mywiki.request.user;
+package junjie.fun.mywiki.request.user_admin;
 
 import lombok.Data;
 

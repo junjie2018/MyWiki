@@ -1,31 +1,28 @@
 package junjie.fun.mywiki.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import junjie.fun.mywiki.entity.User;
-import junjie.fun.mywiki.request.PageRequest;
-import junjie.fun.mywiki.request.condition.PageUserCondition;
-import junjie.fun.mywiki.request.user.CreateOrUpdateUserRequest;
-import junjie.fun.mywiki.request.user.LoginOutRequest;
+import junjie.fun.mywiki.context.UserContext;
+import junjie.fun.mywiki.dto.TokenDataDTO;
 import junjie.fun.mywiki.request.user.LoginRequest;
 import junjie.fun.mywiki.request.user.ResetPasswordRequest;
 import junjie.fun.mywiki.response.ResponseVo;
 import junjie.fun.mywiki.response.data.LoginData;
-import junjie.fun.mywiki.response.data.UserData;
 import junjie.fun.mywiki.service.UserService;
+import junjie.fun.mywiki.utils.CopyUtils;
 import junjie.fun.mywiki.utils.SnowFlake;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
+import static junjie.fun.mywiki.constant.SystemConstant.getTokenKey;
+
 /**
- * 用户管理
+ * 用户基本操作
  */
 @Slf4j
 @RestController
@@ -36,11 +33,9 @@ public class UserController {
     private final UserService userService;
     private final StringRedisTemplate stringRedisTemplate;
 
-    @PostMapping("/user/createOrUpdateUser")
-    public ResponseVo<Long> createOrUpdateUser(CreateOrUpdateUserRequest request) {
-        return ResponseVo.success(userService.createOrUpdateUser(request));
-    }
-
+    /**
+     * 用户登录接口
+     */
     @PostMapping("/user/login")
     public ResponseVo<LoginData> login(@Valid @RequestBody LoginRequest request) {
 
@@ -51,33 +46,28 @@ public class UserController {
         String redisKey = String.format("token:%s", token);
         loginData.setToken(token);
 
-        stringRedisTemplate.opsForValue().set(redisKey, JSON.toJSONString(loginData));
+        stringRedisTemplate.opsForValue().set(redisKey, JSON.toJSONString(CopyUtils.copy(loginData, TokenDataDTO.class)));
 
         return ResponseVo.success(loginData);
     }
 
+    /**
+     * 用户登出接口
+     */
     @PostMapping("/user/loginOut")
-    public ResponseVo<Void> loginOut(@Valid @RequestBody LoginOutRequest request) {
-        String redisKey = String.format("token:%s", request.getToken());
-        stringRedisTemplate.delete(redisKey);
+    public ResponseVo<Void> loginOut() {
+        stringRedisTemplate.delete(getTokenKey(UserContext.getToken()));
         return ResponseVo.success();
     }
 
-    @PostMapping("/user/deleteUser")
-    public ResponseVo<Long> deleteUser(@RequestParam("userId") Long userId) {
+    /**
+     * 用户重置自己密码接口
+     */
+    @PostMapping("/user/changePassword")
+    public ResponseVo<Void> changePassword(ResetPasswordRequest request) {
 
-        userService.removeById(userId);
+        userService.changePassword(request);
 
-        return ResponseVo.success(userId);
-    }
-
-    @PostMapping("/user/resetPassword")
-    public ResponseVo<Long> resetPassword(ResetPasswordRequest request) {
-        return ResponseVo.success(userService.resetPassword(request));
-    }
-
-    @PostMapping("/user/pageUser")
-    public ResponseVo<Page<UserData>> pageUser(PageRequest<PageUserCondition> request) {
-        return ResponseVo.success(userService.pageUser(request));
+        return ResponseVo.success();
     }
 }

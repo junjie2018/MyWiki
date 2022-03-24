@@ -8,9 +8,6 @@ import javax.validation.constraints.Pattern;
 @Data
 public class ResetPasswordRequest {
     @NotNull
-    private Long id;
-
-    @NotNull
     @Pattern(regexp = "^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,32}$")
     private String password;
 }

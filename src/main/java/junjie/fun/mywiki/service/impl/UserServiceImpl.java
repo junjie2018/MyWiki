@@ -6,12 +6,13 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import junjie.fun.mywiki.constant.code.BusinessCode;
+import junjie.fun.mywiki.context.UserContext;
 import junjie.fun.mywiki.entity.User;
 import junjie.fun.mywiki.exception.BusinessException;
 import junjie.fun.mywiki.mapper.UserMapper;
 import junjie.fun.mywiki.request.PageRequest;
 import junjie.fun.mywiki.request.condition.PageUserCondition;
-import junjie.fun.mywiki.request.user.CreateOrUpdateUserRequest;
+import junjie.fun.mywiki.request.user_admin.CreateOrUpdateUserRequest;
 import junjie.fun.mywiki.request.user.LoginRequest;
 import junjie.fun.mywiki.request.user.ResetPasswordRequest;
 import junjie.fun.mywiki.response.data.LoginData;
@@ -84,14 +85,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     /**
      * 修改密码
      */
-    public Long resetPassword(ResetPasswordRequest request) {
+    public void changePassword(ResetPasswordRequest request) {
         LambdaUpdateWrapper<User> updateWrapper = new LambdaUpdateWrapper<User>()
-                .eq(User::getId, request.getId())
+                .eq(User::getId, UserContext.getUserId())
                 .set(User::getPassword, request.getPassword());
 
         baseMapper.update(null, updateWrapper);
-
-        return request.getId();
     }
 
     /**
