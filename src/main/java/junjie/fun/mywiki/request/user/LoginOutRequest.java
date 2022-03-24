@@ -7,6 +7,6 @@ import javax.validation.constraints.Pattern;
 
 @Data
 public class LoginOutRequest {
-    @NotEmpty(message = "token未传递")
+    @NotEmpty
     private String token;
 }

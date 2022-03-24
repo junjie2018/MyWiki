@@ -11,11 +11,17 @@ public class CreateOrUpdateCategoryRequest {
      */
     private Long id;
     /**
-     * 
+     * 父Id
      */
     private Long parentId;
+    /**
+     * 目录名称
+     */
     @NotBlank
     private String name;
+    /**
+     * 排序
+     */
     @NotBlank
     private Integer sort;
 }

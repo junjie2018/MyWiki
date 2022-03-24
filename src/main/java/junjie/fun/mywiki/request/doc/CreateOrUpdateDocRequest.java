@@ -8,22 +8,22 @@ import javax.validation.constraints.NotNull;
 public class CreateOrUpdateDocRequest {
     private Long id;
 
-    @NotNull(message = "【电子书】不能为空")
+    @NotNull
     private Long ebookId;
 
-    @NotNull(message = "【父文档】不能为空")
+    @NotNull
     private Long parentId;
 
-    @NotNull(message = "【名称】不能为空")
+    @NotNull
     private String name;
 
-    @NotNull(message = "【顺序】不能为空")
+    @NotNull
     private Integer sort;
 
     private Integer viewCount;
 
     private Integer voteCount;
 
-    @NotNull(message = "【内容】不能为空")
+    @NotNull
     private String content;
 }

@@ -43,16 +43,17 @@ public class GlobalExceptionHandler {
     @SuppressWarnings("rawtypes")
     public ResponseVo validExceptionHandler(BindException e) {
 
-        FieldError fieldError = e.getFieldError();
 
         // 非生产环境，且fieldError不为空，则覆盖code中的错误消息
         if (SystemConfig.isNotProd() && e.getFieldError() != null) {
 
             e.printStackTrace();
 
+            FieldError fieldError = e.getFieldError();
+
             return ResponseVo.error(
                     PARAM_VALIDATION_WRONG,
-                    String.format("参数校验错误：%s", e.getFieldError().getField()));
+                    String.format("%s：%s", fieldError.getField(), fieldError.getDefaultMessage()));
         }
 
         // 生产环境，或fieldError为空，则使用code中的错误消息

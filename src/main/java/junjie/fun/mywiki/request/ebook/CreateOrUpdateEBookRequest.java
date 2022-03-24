@@ -8,7 +8,7 @@ import javax.validation.constraints.NotNull;
 public class CreateOrUpdateEBookRequest {
     private Long id;
 
-    @NotNull(message = "name不能为空")
+    @NotNull
     private String name;
 
     private Long category1Id;
