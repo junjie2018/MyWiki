@@ -23,7 +23,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
         if (ObjectUtils.isNotEmpty(request.getId())) {
             LambdaUpdateWrapper<Category> updateWrapper = new LambdaUpdateWrapper<Category>()
                     .eq(Category::getId, request.getId())
-                    .set(Category::getParent, request.getParent())
+                    .set(Category::getParentId, request.getParentId())
                     .set(Category::getName, request.getName())
                     .set(Category::getSort, request.getSort());
 
@@ -34,7 +34,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
         // 创建逻辑
         else {
             Category categoryInsert = Category.builder()
-                    .parent(request.getParent())
+                    .parentId(request.getParentId())
                     .name(request.getName())
                     .sort(request.getSort())
                     .build();

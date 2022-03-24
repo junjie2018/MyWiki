@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class Doc {
     private Long id;
     private Long eBookId;
-    private Long parent;
+    private Long parentId;
     private String name;
     private Integer sort;
     private Integer viewCount;

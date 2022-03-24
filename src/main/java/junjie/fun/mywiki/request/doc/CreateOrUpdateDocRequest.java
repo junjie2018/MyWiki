@@ -12,7 +12,7 @@ public class CreateOrUpdateDocRequest {
     private Long ebookId;
 
     @NotNull(message = "【父文档】不能为空")
-    private Long parent;
+    private Long parentId;
 
     @NotNull(message = "【名称】不能为空")
     private String name;

@@ -1,4 +1,4 @@
-package junjie.fun.mywiki.configuration.fastjson;
+package junjie.fun.mywiki.configuration;
 
 import com.alibaba.fastjson.serializer.JSONSerializer;
 import com.alibaba.fastjson.serializer.SerializeConfig;

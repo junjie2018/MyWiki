@@ -16,6 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
+/**
+ * EBook管理
+ */
 @Slf4j
 @RestController
 @RequiredArgsConstructor

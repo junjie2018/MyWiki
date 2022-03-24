@@ -59,7 +59,7 @@ public class DocServiceImpl extends ServiceImpl<DocMapper, Doc> implements DocSe
             LambdaUpdateWrapper<Doc> updateWrapperForDoc = new LambdaUpdateWrapper<Doc>()
                     .eq(Doc::getId, request.getId())
                     .set(Doc::getEBookId, request.getEbookId())
-                    .set(Doc::getParent, request.getParent())
+                    .set(Doc::getParentId, request.getParentId())
                     .set(Doc::getName, request.getName())
                     .set(Doc::getSort, request.getSort())
                     .set(Doc::getViewCount, request.getViewCount())
@@ -79,7 +79,7 @@ public class DocServiceImpl extends ServiceImpl<DocMapper, Doc> implements DocSe
         } else {
             Doc docInert = Doc.builder()
                     .eBookId(request.getEbookId())
-                    .parent(request.getParent())
+                    .parentId(request.getParentId())
                     .name(request.getName())
                     .sort(request.getSort())
                     .viewCount(request.getViewCount())

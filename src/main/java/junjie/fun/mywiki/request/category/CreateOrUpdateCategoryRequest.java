@@ -6,10 +6,16 @@ import javax.validation.constraints.NotBlank;
 
 @Data
 public class CreateOrUpdateCategoryRequest {
+    /**
+     * 主键Id
+     */
     private Long id;
-    private Long parent;
-    @NotBlank(message = "name不可为空")
+    /**
+     * 
+     */
+    private Long parentId;
+    @NotBlank
     private String name;
-    @NotBlank(message = "sort不可为空")
+    @NotBlank
     private Integer sort;
 }

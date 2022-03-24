@@ -1,3 +1,6 @@
+system:
+  run-mode: dev
+
 spring:
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver

@@ -1,47 +1,44 @@
 package junjie.fun.mywiki.response;
 
 import junjie.fun.mywiki.constant.code.Code;
-import lombok.Data;
+import lombok.*;
 
 import static junjie.fun.mywiki.constant.code.SystemCode.SUCCESS;
 
 @Data
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class ResponseVo<T> {
 
-    private final String code;
-    private final String msg;
+    private String code;
+    private String msg;
     private T data;
 
     public boolean isSuccess() {
         return this.code.equals(SUCCESS.getCode());
     }
 
-    private ResponseVo(Code code, T data) {
-        this.code = code.getCode();
-        this.msg = code.getMsg();
-        this.data = data;
+    public static <T> ResponseVo<T> success() {
+        return new ResponseVo<>(SUCCESS.getCode(), SUCCESS.getMsg(), null);
     }
-
-    private ResponseVo(Code code) {
-        this.code = code.getCode();
-        this.msg = code.getMsg();
-    }
-
 
     public static <T> ResponseVo<T> success(T data) {
-        return new ResponseVo<>(SUCCESS, data);
+        return new ResponseVo<>(SUCCESS.getCode(), SUCCESS.getMsg(), data);
     }
 
-    public static <T> ResponseVo<T> success() {
-        return new ResponseVo<>(SUCCESS);
+    public static <T> ResponseVo<T> error(Code code) {
+        return new ResponseVo<>(code.getCode(), code.getMsg(), null);
     }
 
     public static <T> ResponseVo<T> error(Code code, T data) {
-        return new ResponseVo<>(code, data);
+        return new ResponseVo<>(code.getCode(), code.getMsg(), data);
     }
 
-    @SuppressWarnings("rawtypes")
-    public static ResponseVo error(Code code) {
-        return new ResponseVo<>(code, null);
+    public static <T> ResponseVo<T> error(Code code, String msg) {
+        return new ResponseVo<>(code.getCode(), msg, null);
+    }
+
+    public static <T> ResponseVo<T> error(Code code, String msg, T data) {
+        return new ResponseVo<>(code.getCode(), msg, data);
     }
 }
