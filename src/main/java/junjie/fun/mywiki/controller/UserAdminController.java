@@ -5,7 +5,6 @@ import junjie.fun.mywiki.context.UserContext;
 import junjie.fun.mywiki.exception.BusinessException;
 import junjie.fun.mywiki.request.PageRequest;
 import junjie.fun.mywiki.request.condition.PageUserCondition;
-import junjie.fun.mywiki.request.user_admin.CreateOrUpdateUserRequest;
 import junjie.fun.mywiki.request.user_admin.CreateUserRequest;
 import junjie.fun.mywiki.request.user_admin.UpdateUserRequest;
 import junjie.fun.mywiki.response.ResponseVo;
@@ -45,7 +44,10 @@ public class UserAdminController {
      */
     @PostMapping("/user/updateUser")
     public ResponseVo<Long> updateUser(@Valid @RequestBody UpdateUserRequest request) {
-        return ResponseVo.success(userService.updateUser(request));
+
+        userService.updateUser(request);
+
+        return ResponseVo.success();
     }
 
 
