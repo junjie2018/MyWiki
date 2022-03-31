@@ -6,7 +6,8 @@ import junjie.fun.mywiki.exception.BusinessException;
 import junjie.fun.mywiki.request.PageRequest;
 import junjie.fun.mywiki.request.condition.PageUserCondition;
 import junjie.fun.mywiki.request.user_admin.CreateOrUpdateUserRequest;
-import junjie.fun.mywiki.request.user.ResetPasswordRequest;
+import junjie.fun.mywiki.request.user_admin.CreateUserRequest;
+import junjie.fun.mywiki.request.user_admin.UpdateUserRequest;
 import junjie.fun.mywiki.response.ResponseVo;
 import junjie.fun.mywiki.response.data.UserData;
 import junjie.fun.mywiki.service.UserService;
@@ -32,12 +33,21 @@ public class UserAdminController {
     private final UserService userService;
 
     /**
-     * 创建或更新一个用户
+     * 创建一个用户
      */
-    @PostMapping("/user/createOrUpdateUser")
-    public ResponseVo<Long> createOrUpdateUser(@Valid @RequestBody CreateOrUpdateUserRequest request) {
-        return ResponseVo.success(userService.createOrUpdateUser(request));
+    @PostMapping("/user/createUser")
+    public ResponseVo<Long> createUser(@Valid @RequestBody CreateUserRequest request) {
+        return ResponseVo.success(userService.createUser(request));
     }
+
+    /**
+     * 更新一个用户
+     */
+    @PostMapping("/user/updateUser")
+    public ResponseVo<Long> updateUser(@Valid @RequestBody UpdateUserRequest request) {
+        return ResponseVo.success(userService.updateUser(request));
+    }
+
 
     /**
      * 删除一个用户

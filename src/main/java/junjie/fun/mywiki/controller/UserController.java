@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSON;
 import junjie.fun.mywiki.context.UserContext;
 import junjie.fun.mywiki.dto.TokenDataDTO;
 import junjie.fun.mywiki.request.user.LoginRequest;
-import junjie.fun.mywiki.request.user.ResetPasswordRequest;
+import junjie.fun.mywiki.request.user.ChangePasswordRequest;
 import junjie.fun.mywiki.response.ResponseVo;
 import junjie.fun.mywiki.response.data.LoginData;
 import junjie.fun.mywiki.service.UserService;
@@ -64,7 +64,7 @@ public class UserController {
      * 用户重置自己密码接口
      */
     @PostMapping("/user/changePassword")
-    public ResponseVo<Void> changePassword(ResetPasswordRequest request) {
+    public ResponseVo<Void> changePassword(@Valid @RequestBody ChangePasswordRequest request) {
 
         userService.changePassword(request);
 

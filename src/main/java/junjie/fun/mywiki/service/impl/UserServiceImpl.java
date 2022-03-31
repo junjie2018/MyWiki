@@ -12,9 +12,10 @@ import junjie.fun.mywiki.exception.BusinessException;
 import junjie.fun.mywiki.mapper.UserMapper;
 import junjie.fun.mywiki.request.PageRequest;
 import junjie.fun.mywiki.request.condition.PageUserCondition;
-import junjie.fun.mywiki.request.user_admin.CreateOrUpdateUserRequest;
 import junjie.fun.mywiki.request.user.LoginRequest;
-import junjie.fun.mywiki.request.user.ResetPasswordRequest;
+import junjie.fun.mywiki.request.user.ChangePasswordRequest;
+import junjie.fun.mywiki.request.user_admin.CreateUserRequest;
+import junjie.fun.mywiki.request.user_admin.UpdateUserRequest;
 import junjie.fun.mywiki.response.data.LoginData;
 import junjie.fun.mywiki.response.data.UserData;
 import junjie.fun.mywiki.service.UserService;
@@ -53,39 +54,36 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     /**
      * 创建或更新用户
      */
-    public Long createOrUpdateUser(CreateOrUpdateUserRequest request) {
-        // 更新操作
-        if (ObjectUtils.isNotEmpty(request.getId())) {
-            LambdaUpdateWrapper<User> updateWrapper = new LambdaUpdateWrapper<User>()
-                    .eq(User::getId, request.getId())
-                    .set(User::getName, request.getName())
-                    .set(User::getPassword, request.getPassword())
-                    .set(User::getLoginName, request.getLoginName());
+    public Long createUser(CreateUserRequest request) {
+        User userInDB = getUserByLoginName(request.getLoginName());
 
-            baseMapper.update(null, updateWrapper);
-
-            return request.getId();
+        if (ObjectUtils.isNotEmpty(userInDB)) {
+            throw new BusinessException(LOGIN_NAME_EXIST);
         }
-        // 创建操作
-        else {
-            User userInDB = getUserByLoginName(request.getLoginName());
 
-            if (ObjectUtils.isNotEmpty(userInDB)) {
-                throw new BusinessException(LOGIN_NAME_EXIST);
-            }
+        User userInsert = CopyUtils.copy(request, User.class);
 
-            User userInsert = CopyUtils.copy(request, User.class);
+        baseMapper.insert(userInsert);
 
-            baseMapper.insert(userInsert);
+        return userInsert.getId();
+    }
 
-            return userInsert.getId();
-        }
+    /**
+     * 更新用户
+     */
+    public void updateUser(UpdateUserRequest request) {
+        LambdaUpdateWrapper<User> updateWrapper = new LambdaUpdateWrapper<User>()
+                .eq(User::getId, request.getId())
+                .set(User::getName, request.getName())
+                .set(User::getPassword, request.getPassword());
+
+        baseMapper.update(null, updateWrapper);
     }
 
     /**
      * 修改密码
      */
-    public void changePassword(ResetPasswordRequest request) {
+    public void changePassword(ChangePasswordRequest request) {
         LambdaUpdateWrapper<User> updateWrapper = new LambdaUpdateWrapper<User>()
                 .eq(User::getId, UserContext.getUserId())
                 .set(User::getPassword, request.getPassword());

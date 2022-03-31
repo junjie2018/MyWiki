@@ -46,9 +46,7 @@ public class LoginInterceptor implements HandlerInterceptor {
             return false;
         }
 
-        String tokenKey = getTokenKey(token);
-
-        String tokenValue = stringRedisTemplate.opsForValue().get(tokenKey);
+        String tokenValue = stringRedisTemplate.opsForValue().get(getTokenKey(token));
         if (StringUtils.isBlank(tokenValue)) {
             log.info("{}：Token无效，请求不通过", request.getRequestURL().toString());
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
@@ -65,13 +63,11 @@ public class LoginInterceptor implements HandlerInterceptor {
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
 
         if (SystemConfig.isNotProd()) {
-            Long startTime = (Long) request.getAttribute("REQUEST_START_TIME");
+            Long startTime = (Long) request.getAttribute(REQUEST_START_TIME);
             log.info("Request {} Time Use: {}",
                     request.getRequestURL().toString(),
                     System.currentTimeMillis() - startTime);
         }
-
-        HandlerInterceptor.super.postHandle(request, response, handler, modelAndView);
     }
 
     @Override
