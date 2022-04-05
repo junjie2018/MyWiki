@@ -1,12 +1,14 @@
 package junjie.fun.mywiki.configuration.web;
 
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
-import junjie.fun.mywiki.interceptor.LoginInterceptor;
+//import junjie.fun.mywiki.interceptor.LoginInterceptor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.Formatter;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -28,7 +30,7 @@ import java.util.Locale;
 public class WebConfig implements WebMvcConfigurer {
 
     private final FastJsonHttpMessageConverter fastJsonHttpMessageConverter;
-    private final LoginInterceptor loginInterceptor;
+//    private final LoginInterceptor loginInterceptor;
 
     /**
      * 配置HttpMessageConverts
@@ -75,18 +77,32 @@ public class WebConfig implements WebMvcConfigurer {
         WebMvcConfigurer.super.addFormatters(registry);
     }
 
+//    /**
+//     * 配置拦截器，符合要求的url进行拦截
+//     *
+//     * @param registry interceptors注册中心
+//     */
+//    @Override
+//    public void addInterceptors(InterceptorRegistry registry) {
+//
+//        registry.addInterceptor(loginInterceptor)
+//                .addPathPatterns("/**")
+//                .excludePathPatterns("/user/login");
+//
+//        WebMvcConfigurer.super.addInterceptors(registry);
+//    }
+
     /**
-     * 配置拦截器，符合要求的url进行拦截
-     *
-     * @param registry interceptors注册中心
+     * CORS配置
      */
     @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-
-        registry.addInterceptor(loginInterceptor)
-                .addPathPatterns("/**")
-                .excludePathPatterns("/user/login");
-
-        WebMvcConfigurer.super.addInterceptors(registry);
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedOriginPatterns("*")
+                .allowedHeaders(CorsConfiguration.ALL)
+                .allowedMethods(CorsConfiguration.ALL)
+                .allowCredentials(true)
+                // 1小时内不需要再预检（发Options请求）
+                .maxAge(3600);
     }
 }

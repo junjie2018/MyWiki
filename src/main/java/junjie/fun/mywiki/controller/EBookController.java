@@ -3,7 +3,8 @@ package junjie.fun.mywiki.controller;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import junjie.fun.mywiki.request.PageRequest;
 import junjie.fun.mywiki.request.condition.PageEBookCondition;
-import junjie.fun.mywiki.request.ebook.CreateOrUpdateEBookRequest;
+import junjie.fun.mywiki.request.ebook.CreateEBookRequest;
+import junjie.fun.mywiki.request.ebook.UpdateEBookRequest;
 import junjie.fun.mywiki.response.ResponseVo;
 import junjie.fun.mywiki.response.data.EBookData;
 import junjie.fun.mywiki.service.EBookService;
@@ -31,14 +32,20 @@ public class EBookController {
         return ResponseVo.success(eBookService.pageEBook(request));
     }
 
-    @PostMapping("/ebook/createOrUpdateEBook")
-    public ResponseVo<Long> createOrUpdateEBook(@Valid @RequestBody CreateOrUpdateEBookRequest request) {
-        return ResponseVo.success(eBookService.createOrUpdate(request));
+    @PostMapping("/ebook/createEBook")
+    public ResponseVo<Long> createEBook(@Valid @RequestBody CreateEBookRequest request) {
+        return ResponseVo.success(eBookService.createEBook(request));
     }
+
+    @PostMapping("/ebook/updateEBook")
+    public ResponseVo<Long> updateEBook(@Valid @RequestBody UpdateEBookRequest request) {
+        return ResponseVo.success(eBookService.updateEBook(request));
+    }
+
 
     @PostMapping("/ebook/deleteEBook")
     public ResponseVo<Long> tmp(@RequestParam("eBookId") Long eBookId) {
-        eBookService.removeById(eBookId);
+        eBookService.deleteEBook(eBookId);
 
         return ResponseVo.success(eBookId);
     }

@@ -100,7 +100,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 new PageUserCondition() :
                 request.getCondition();
 
-        Page<User> pageEntity = new Page<>(request.getPageNo(), request.getPageSize());
+        Page<User> pageEntity = new Page<>(request.getCurrent(), request.getPageSize());
 
         LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<User>()
                 .eq(StringUtils.isNotEmpty(condition.getLoginName()), User::getLoginName, condition.getLoginName());
