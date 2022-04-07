@@ -12,7 +12,8 @@ import junjie.fun.mywiki.mapper.DocMapper;
 import junjie.fun.mywiki.mapper.EBookMapper;
 import junjie.fun.mywiki.request.PageRequest;
 import junjie.fun.mywiki.request.condition.PageEBookCondition;
-import junjie.fun.mywiki.request.ebook.CreateOrUpdateEBookRequest;
+import junjie.fun.mywiki.request.ebook.CreateEBookRequest;
+import junjie.fun.mywiki.request.ebook.UpdateEBookRequest;
 import junjie.fun.mywiki.response.data.EBookData;
 import junjie.fun.mywiki.service.EBookService;
 import junjie.fun.mywiki.utils.CopyUtils;
@@ -31,46 +32,47 @@ public class EBookServiceImpl extends ServiceImpl<EBookMapper, EBook> implements
     private final ContentMapper contentMapper;
     private final DocMapper docMapper;
 
-    public Long createOrUpdate(CreateOrUpdateEBookRequest request) {
-        if (isNotEmpty(request.getId())) {
-            LambdaUpdateWrapper<EBook> updateWrapper = new LambdaUpdateWrapper<EBook>()
-                    .eq(EBook::getId, request.getId())
-                    .set(EBook::getName, request.getName())
-                    .set(EBook::getCategory1Id, request.getCategory1Id())
-                    .set(EBook::getCategory2Id, request.getCategory2Id())
-                    .set(EBook::getDescription, request.getDescription())
-                    .set(EBook::getCover, request.getCover())
-                    .set(EBook::getDocCount, request.getDocCount())
-                    .set(EBook::getViewCount, request.getViewCount())
-                    .set(EBook::getVoteCount, request.getVoteCount());
+    public Long createEBook(CreateEBookRequest request) {
+        EBook eBookInert = EBook.builder()
+                .name(request.getName())
+                .category1Id(request.getCategory1Id())
+                .category2Id(request.getCategory2Id())
+                .description(request.getDescription())
+                .cover(request.getCover())
+                .docCount(request.getDocCount())
+                .viewCount(request.getViewCount())
+                .voteCount(request.getVoteCount())
+                .build();
 
-            this.baseMapper.update(null, updateWrapper);
+        this.baseMapper.insert(eBookInert);
 
-            return request.getId();
-        } else {
-            EBook eBookInert = EBook.builder()
-                    .name(request.getName())
-                    .category1Id(request.getCategory1Id())
-                    .category2Id(request.getCategory2Id())
-                    .description(request.getDescription())
-                    .cover(request.getCover())
-                    .docCount(request.getDocCount())
-                    .viewCount(request.getViewCount())
-                    .voteCount(request.getVoteCount())
-                    .build();
+        return eBookInert.getId();
+    }
 
-            this.baseMapper.insert(eBookInert);
+    public Long updateEBook(UpdateEBookRequest request) {
+        LambdaUpdateWrapper<EBook> updateWrapper = new LambdaUpdateWrapper<EBook>()
+                .eq(EBook::getId, request.getId())
+                .set(EBook::getName, request.getName())
+                .set(EBook::getCategory1Id, request.getCategory1Id())
+                .set(EBook::getCategory2Id, request.getCategory2Id())
+                .set(EBook::getDescription, request.getDescription())
+                .set(EBook::getCover, request.getCover());
+//                .set(EBook::getDocCount, request.getDocCount())
+//                .set(EBook::getViewCount, request.getViewCount())
+//                .set(EBook::getVoteCount, request.getVoteCount());
 
-            return eBookInert.getId();
-        }
+        this.baseMapper.update(null, updateWrapper);
+
+        return request.getId();
     }
 
     public Page<EBookData> pageEBook(PageRequest<PageEBookCondition> request) {
+        // todo 这块的分页查询有点问题，需要优化一下
         PageEBookCondition condition = request.getCondition() == null ?
                 new PageEBookCondition() :
                 request.getCondition();
 
-        Page<EBook> pageEntity = new Page<>(request.getPageNo(), request.getPageSize());
+        Page<EBook> pageEntity = new Page<>(request.getCurrent(), request.getPageSize());
 
         LambdaQueryWrapper<EBook> queryWrapper = new LambdaQueryWrapper<EBook>()
                 .eq(isNotEmpty(condition.getCategory2Id()), EBook::getCategory2Id, condition.getCategory2Id())
@@ -83,17 +85,18 @@ public class EBookServiceImpl extends ServiceImpl<EBookMapper, EBook> implements
 
     @Override
     public Long deleteEBook(Long eBookId) {
-        // 删除关联的内容
-        LambdaQueryWrapper<Content> contentDelete = new LambdaQueryWrapper<Content>()
-                .eq(Content::getEBookId, eBookId);
-
-        contentMapper.delete(contentDelete);
-
-        // 删除关联的文档
-        LambdaQueryWrapper<Doc> docDelete = new LambdaQueryWrapper<Doc>()
-                .eq(Doc::getEBookId, eBookId);
-
-        docMapper.delete(docDelete);
+        // todo 这块有Bug，明天修理一下
+//        // 删除关联的内容
+//        LambdaQueryWrapper<Content> contentDelete = new LambdaQueryWrapper<Content>()
+//                .eq(Content::getEBookId, eBookId);
+//
+//        contentMapper.delete(contentDelete);
+//
+//        // 删除关联的文档
+//        LambdaQueryWrapper<Doc> docDelete = new LambdaQueryWrapper<Doc>()
+//                .eq(Doc::getEBookId, eBookId);
+//
+//        docMapper.delete(docDelete);
 
         // 删除文档
         this.baseMapper.deleteById(eBookId);

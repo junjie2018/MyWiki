@@ -41,7 +41,7 @@ public class DocServiceImpl extends ServiceImpl<DocMapper, Doc> implements DocSe
                 new PageDocCondition() :
                 request.getCondition();
 
-        Page<Doc> pageEntity = new Page<>(request.getPageNo(), request.getPageSize());
+        Page<Doc> pageEntity = new Page<>(request.getCurrent(), request.getPageSize());
 
         LambdaQueryWrapper<Doc> queryWrapper = new LambdaQueryWrapper<Doc>()
                 .eq(ObjectUtils.isNotEmpty(condition.getEBookId()), Doc::getEBookId, condition.getEBookId());

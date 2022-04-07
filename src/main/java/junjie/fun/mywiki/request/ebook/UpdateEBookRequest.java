@@ -1,24 +1,29 @@
-package junjie.fun.mywiki.entity;
+package junjie.fun.mywiki.request.ebook;
 
-import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-@TableName("ebook")
-public class EBook {
+public class UpdateEBookRequest {
+    @NotNull
     private Long id;
+
+    @NotBlank
     private String name;
+
     private Long category1Id;
+
     private Long category2Id;
+
     private String description;
+
     private String cover;
+
     private Integer docCount;
+
     private Integer viewCount;
+
     private Integer voteCount;
 }

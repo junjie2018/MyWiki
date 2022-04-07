@@ -51,7 +51,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
                 new PageCategoryCondition() :
                 request.getCondition();
 
-        Page<Category> pageEntity = new Page<>(request.getPageNo(), request.getPageSize());
+        Page<Category> pageEntity = new Page<>(request.getCurrent(), request.getPageSize());
 
         LambdaQueryWrapper<Category> queryWrapper = new LambdaQueryWrapper<Category>()
                 .orderByAsc(Category::getSort);
