@@ -20,10 +20,4 @@ public class UpdateEBookRequest {
     private String description;
 
     private String cover;
-
-    private Integer docCount;
-
-    private Integer viewCount;
-
-    private Integer voteCount;
 }

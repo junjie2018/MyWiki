@@ -6,7 +6,9 @@ import junjie.fun.mywiki.entity.EBook;
 import junjie.fun.mywiki.request.PageRequest;
 import junjie.fun.mywiki.request.condition.PageEBookCondition;
 import junjie.fun.mywiki.request.ebook.CreateEBookRequest;
+import junjie.fun.mywiki.request.ebook.PageEBookRequest;
 import junjie.fun.mywiki.request.ebook.UpdateEBookRequest;
+import junjie.fun.mywiki.response.PageData;
 import junjie.fun.mywiki.response.data.EBookData;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +19,7 @@ public interface EBookService extends IService<EBook> {
 
     Long updateEBook(UpdateEBookRequest request);
 
-    Page<EBookData> pageEBook(PageRequest<PageEBookCondition> request);
+    PageData<EBookData> pageEBook(PageEBookRequest request);
 
     Long deleteEBook(Long eBookId);
 }

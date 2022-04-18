@@ -1,6 +1,5 @@
 package junjie.fun.mywiki.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -11,9 +10,11 @@ import junjie.fun.mywiki.request.category.CreateOrUpdateCategoryRequest;
 import junjie.fun.mywiki.request.condition.PageCategoryCondition;
 import junjie.fun.mywiki.response.data.CategoryData;
 import junjie.fun.mywiki.service.CategoryService;
-import junjie.fun.mywiki.utils.CopyUtils;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
+
+
 
 @Slf4j
 public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> implements CategoryService {
@@ -47,18 +48,19 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
 
     public Page<CategoryData> pageCategory(PageRequest<PageCategoryCondition> request) {
 
-        PageCategoryCondition condition = request.getCondition() == null ?
-                new PageCategoryCondition() :
-                request.getCondition();
 
-        Page<Category> pageEntity = new Page<>(request.getCurrent(), request.getPageSize());
+//
+//        Page<Category> pageEntity = buildPage(request, Category.class);
+//
+//
+//        LambdaQueryWrapper<Category> queryWrapper = new LambdaQueryWrapper<Category>()
+//                .orderByAsc(Category::getSort);
+//
+//        baseMapper.selectPage(pageEntity, queryWrapper);
 
-        LambdaQueryWrapper<Category> queryWrapper = new LambdaQueryWrapper<Category>()
-                .orderByAsc(Category::getSort);
+//        return CopyUtils.copyPage(pageEntity, CategoryData.class);
 
-        baseMapper.selectPage(pageEntity, queryWrapper);
-
-        return CopyUtils.copyPage(pageEntity, CategoryData.class);
+        return null;
     }
 
 }

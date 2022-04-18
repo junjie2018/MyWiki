@@ -1,5 +1,8 @@
 package junjie.fun.mywiki.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,6 +15,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @TableName("ebook")
 public class EBook {
+    @TableId(type = IdType.AUTO)
     private Long id;
     private String name;
     private Long category1Id;

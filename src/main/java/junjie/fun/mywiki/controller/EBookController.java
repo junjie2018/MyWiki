@@ -1,10 +1,10 @@
 package junjie.fun.mywiki.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import junjie.fun.mywiki.request.PageRequest;
-import junjie.fun.mywiki.request.condition.PageEBookCondition;
 import junjie.fun.mywiki.request.ebook.CreateEBookRequest;
+import junjie.fun.mywiki.request.ebook.PageEBookRequest;
 import junjie.fun.mywiki.request.ebook.UpdateEBookRequest;
+import junjie.fun.mywiki.response.PageData;
 import junjie.fun.mywiki.response.ResponseVo;
 import junjie.fun.mywiki.response.data.EBookData;
 import junjie.fun.mywiki.service.EBookService;
@@ -28,7 +28,7 @@ public class EBookController {
     private final EBookService eBookService;
 
     @PostMapping("/ebook/pageEBook")
-    public ResponseVo<Page<EBookData>> pageEBook(@Valid @RequestBody PageRequest<PageEBookCondition> request) {
+    public ResponseVo<PageData<EBookData>> pageEBook(@Valid @RequestBody PageEBookRequest request) {
         return ResponseVo.success(eBookService.pageEBook(request));
     }
 
