@@ -4,6 +4,8 @@ import junjie.fun.mywiki.request.Page2;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.List;
+
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class PageEBookRequest extends Page2 {
@@ -15,6 +17,11 @@ public class PageEBookRequest extends Page2 {
 
     @Data
     public static class Condition {
+        /**
+         * 主键
+         */
+        private List<String> ids;
+
         /**
          * EBook名称
          */

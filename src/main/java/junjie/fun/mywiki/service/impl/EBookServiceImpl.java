@@ -20,6 +20,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 import static org.apache.commons.lang3.ObjectUtils.*;
 import static org.apache.commons.lang3.StringUtils.*;
 
@@ -78,7 +80,16 @@ public class EBookServiceImpl extends ServiceImpl<EBookMapper, EBook> implements
     }
 
     @Override
-    public Long deleteEBook(Long eBookId) {
+    public List<EBookData> queryEBooks(List<Long> ebookIds) {
+
+        LambdaQueryWrapper<EBook> queryWrapper = new LambdaQueryWrapper<EBook>()
+                .in(EBook::getId, ebookIds);
+
+        return CopyUtils.copyList(baseMapper.selectList(queryWrapper), EBookData.class);
+    }
+
+    @Override
+    public void deleteEBooks(List<Long> eBookIds) {
         // todo 这块有Bug，明天修理一下
 //        // 删除关联的内容
 //        LambdaQueryWrapper<Content> contentDelete = new LambdaQueryWrapper<Content>()
@@ -93,8 +104,6 @@ public class EBookServiceImpl extends ServiceImpl<EBookMapper, EBook> implements
 //        docMapper.delete(docDelete);
 
         // 删除文档
-        this.baseMapper.deleteById(eBookId);
-
-        return eBookId;
+        this.baseMapper.deleteBatchIds(eBookIds);
     }
 }

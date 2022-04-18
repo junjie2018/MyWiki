@@ -21,4 +21,12 @@ public abstract class Page2 {
         //noinspection unchecked
         return CopyUtils.copy(this, Page.class);
     }
+
+    public static <T> Page<T> getOnePage(Class<T> entityClass) {
+        return new Page<>(1, 1);
+    }
+
+    public static <T> Page<T> getNoLimitPage(Class<T> entityClass) {
+        return new Page<>(1, -1);
+    }
 }
