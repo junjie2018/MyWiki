@@ -1,6 +1,7 @@
 package junjie.fun.mywiki.utils;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import junjie.fun.mywiki.response.PageData;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 
@@ -47,6 +48,33 @@ public class CopyUtils {
         }
 
         Page<R> result = new Page<>();
+
+        BeanUtils.copyProperties(entityPage, result);
+        result.setRecords(pageRecords);
+
+        return result;
+    }
+
+    public static <T, R> PageData<R> copyPageData(Page<T> entityPage, Class<R> clazz) {
+        return copyPageData(entityPage, clazz, null);
+    }
+
+    public static <T, R> PageData<R> copyPageData(Page<T> entityPage, Class<R> clazz,
+                                                  BiConsumer<T, R> disposer) {
+
+        List<R> pageRecords = new ArrayList<>();
+
+        for (T record : entityPage.getRecords()) {
+            R pateRecordItem = copy(record, clazz);
+
+            if (disposer != null) {
+                disposer.accept(record, pateRecordItem);
+            }
+
+            pageRecords.add(pateRecordItem);
+        }
+
+        PageData<R> result = new PageData<>();
 
         BeanUtils.copyProperties(entityPage, result);
         result.setRecords(pageRecords);

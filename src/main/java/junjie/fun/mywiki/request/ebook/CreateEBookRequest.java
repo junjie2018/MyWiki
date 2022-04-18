@@ -6,8 +6,6 @@ import javax.validation.constraints.NotNull;
 
 @Data
 public class CreateEBookRequest {
-    private Long id;
-
     @NotNull
     private String name;
 
@@ -18,10 +16,4 @@ public class CreateEBookRequest {
     private String description;
 
     private String cover;
-
-    private Integer docCount;
-
-    private Integer viewCount;
-
-    private Integer voteCount;
 }
