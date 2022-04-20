@@ -1,9 +1,9 @@
 package junjie.fun.mywiki.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import junjie.fun.mywiki.entity.Category;
 import org.apache.ibatis.annotations.Mapper;
 
+import junjie.fun.mywiki.entity.*;
+
 @Mapper
-public interface CategoryMapper extends BaseMapper<Category> {
-}
+public interface CategoryMapper extends BaseMapper<Category> {}

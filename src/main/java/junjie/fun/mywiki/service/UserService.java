@@ -1,27 +1,30 @@
 package junjie.fun.mywiki.service;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
-import junjie.fun.mywiki.entity.User;
-import junjie.fun.mywiki.request.PageRequest;
-import junjie.fun.mywiki.request.condition.PageUserCondition;
-import junjie.fun.mywiki.request.user.LoginRequest;
-import junjie.fun.mywiki.request.user.ChangePasswordRequest;
-import junjie.fun.mywiki.request.user_admin.CreateUserRequest;
-import junjie.fun.mywiki.request.user_admin.UpdateUserRequest;
-import junjie.fun.mywiki.response.data.LoginData;
-import junjie.fun.mywiki.response.data.UserData;
 import org.springframework.stereotype.Service;
+import junjie.fun.mywiki.common.response.PageData;
+
+import java.util.List;
+
+import junjie.fun.mywiki.request.*;
+import junjie.fun.mywiki.response.*;
+import junjie.fun.mywiki.entity.*;
 
 @Service
 public interface UserService extends IService<User> {
-    LoginData login(LoginRequest request);
 
-    Long createUser(CreateUserRequest request);
+  /** 创建用户 */
+  Long createUser(CreateUserRequest request);
 
-    void updateUser(UpdateUserRequest request);
+  /** 删除用户 */
+  void deleteUsers(List<Long> userIds);
 
-    void changePassword(ChangePasswordRequest request);
+  /** 编辑用户 */
+  Long updateUser(UpdateUserRequest request);
 
-    Page<UserData> pageUser(PageRequest<PageUserCondition> request);
+  /** 分页查找用户 */
+  PageData<UserData> pageUser(PageUserRequest request);
+
+  /** 根据Id数组查找用户 */
+  List<UserData> queryUsers(List<Long> userIds);
 }

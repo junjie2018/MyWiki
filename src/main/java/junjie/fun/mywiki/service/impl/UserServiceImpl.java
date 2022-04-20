@@ -1,119 +1,81 @@
 package junjie.fun.mywiki.service.impl;
 
-import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import junjie.fun.mywiki.constant.code.BusinessCode;
-import junjie.fun.mywiki.context.UserContext;
-import junjie.fun.mywiki.entity.User;
-import junjie.fun.mywiki.exception.BusinessException;
-import junjie.fun.mywiki.mapper.UserMapper;
-import junjie.fun.mywiki.request.PageRequest;
-import junjie.fun.mywiki.request.condition.PageUserCondition;
-import junjie.fun.mywiki.request.user.LoginRequest;
-import junjie.fun.mywiki.request.user.ChangePasswordRequest;
-import junjie.fun.mywiki.request.user_admin.CreateUserRequest;
-import junjie.fun.mywiki.request.user_admin.UpdateUserRequest;
-import junjie.fun.mywiki.response.data.LoginData;
-import junjie.fun.mywiki.response.data.UserData;
-import junjie.fun.mywiki.service.UserService;
+
+import junjie.fun.mywiki.common.response.PageData;
 import junjie.fun.mywiki.utils.CopyUtils;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
-import static junjie.fun.mywiki.constant.code.BusinessCode.LOGIN_NAME_EXIST;
+import java.util.List;
+
+import junjie.fun.mywiki.request.*;
+import junjie.fun.mywiki.response.*;
+import junjie.fun.mywiki.entity.*;
+import junjie.fun.mywiki.service.*;
+import junjie.fun.mywiki.mapper.*;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
 
-    /**
-     * 用户登录
-     */
-    public LoginData login(LoginRequest request) {
-
-        User userInDB = getUserByLoginName(request.getLoginName());
-
-        if (ObjectUtils.isEmpty(userInDB)) {
-            log.info("用户不存在：{}", JSON.toJSONString(request));
-            throw new BusinessException(BusinessCode.LOGIN_NAME_NOT_EXIST);
-        }
-
-        if (!StringUtils.equals(userInDB.getPassword(), request.getPassword())) {
-            log.info("用户密码错误：{}", JSON.toJSONString(request));
-            throw new BusinessException(BusinessCode.PASSWORD_WRONG);
-        }
-
-        return CopyUtils.copy(userInDB, LoginData.class);
-    }
-
-    /**
-     * 创建或更新用户
-     */
+    @Override
     public Long createUser(CreateUserRequest request) {
-        User userInDB = getUserByLoginName(request.getLoginName());
+        User eBookInert =
+                User.builder()
+                        .loginName(request.getLoginName())
+                        .name(request.getName())
+                        .password(request.getPassword())
+                        .build();
 
-        if (ObjectUtils.isNotEmpty(userInDB)) {
-            throw new BusinessException(LOGIN_NAME_EXIST);
-        }
+        this.baseMapper.insert(eBookInert);
 
-        User userInsert = CopyUtils.copy(request, User.class);
-
-        baseMapper.insert(userInsert);
-
-        return userInsert.getId();
+        return eBookInert.getId();
     }
 
-    /**
-     * 更新用户
-     */
-    public void updateUser(UpdateUserRequest request) {
-        LambdaUpdateWrapper<User> updateWrapper = new LambdaUpdateWrapper<User>()
-                .eq(User::getId, request.getId())
-                .set(User::getName, request.getName())
-                .set(User::getPassword, request.getPassword());
-
-        baseMapper.update(null, updateWrapper);
+    @Override
+    public void deleteUsers(List<Long> userIds) {
+        this.baseMapper.deleteBatchIds(userIds);
     }
 
-    /**
-     * 修改密码
-     */
-    public void changePassword(ChangePasswordRequest request) {
-        LambdaUpdateWrapper<User> updateWrapper = new LambdaUpdateWrapper<User>()
-                .eq(User::getId, UserContext.getUserId())
-                .set(User::getPassword, request.getPassword());
+    @Override
+    public Long updateUser(UpdateUserRequest request) {
+        LambdaUpdateWrapper<User> updateWrapper =
+                new LambdaUpdateWrapper<User>()
+                        .eq(User::getId, request.getId())
+                        .set(User::getLoginName, request.getLoginName())
+                        .set(User::getName, request.getName())
+                        .set(User::getPassword, request.getPassword());
 
-        baseMapper.update(null, updateWrapper);
+        this.baseMapper.update(null, updateWrapper);
+
+        return request.getId();
     }
 
-    /**
-     * 分页查询用户
-     */
-    public Page<UserData> pageUser(PageRequest<PageUserCondition> request) {
+    @Override
+    public PageData<UserData> pageUser(PageUserRequest request) {
 
-        PageUserCondition condition = request.getCondition() == null ?
-                new PageUserCondition() :
-                request.getCondition();
+        Page<User> pageEntity = request.getPage(User.class);
+        PageUserRequest.Condition condition = request.getCondition();
 
-        Page<User> pageEntity = new Page<>(request.getCurrent(), request.getSize());
-
-        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<User>()
-                .eq(StringUtils.isNotEmpty(condition.getLoginName()), User::getLoginName, condition.getLoginName());
+        LambdaQueryWrapper<User> queryWrapper =
+                new LambdaQueryWrapper<User>().orderByDesc(User::getCreateTime);
 
         baseMapper.selectPage(pageEntity, queryWrapper);
 
-        return CopyUtils.copyPage(pageEntity, UserData.class);
+        return CopyUtils.copyPageData(pageEntity, UserData.class);
     }
 
-    private User getUserByLoginName(String loginName) {
-        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<User>()
-                .eq(User::getLoginName, loginName);
+    @Override
+    public List<UserData> queryUsers(List<Long> userIds) {
 
-        return baseMapper.selectOne(queryWrapper);
+        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<User>().in(User::getId, userIds);
+
+        return CopyUtils.copyList(baseMapper.selectList(queryWrapper), UserData.class);
     }
 }

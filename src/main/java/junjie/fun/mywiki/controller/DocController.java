@@ -1,59 +1,93 @@
 package junjie.fun.mywiki.controller;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import junjie.fun.mywiki.request.PageRequest;
-import junjie.fun.mywiki.request.condition.PageDocCondition;
-import junjie.fun.mywiki.request.doc.CreateOrUpdateDocRequest;
-import junjie.fun.mywiki.response.ResponseVo;
-import junjie.fun.mywiki.response.data.DocData;
-import junjie.fun.mywiki.service.DocService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.web.bind.annotation.*;
+
+import junjie.fun.mywiki.common.response.PageData;
+import junjie.fun.mywiki.common.response.ResponseVo;
 
 import javax.validation.Valid;
+import java.util.Collections;
 import java.util.List;
 
-/**
- * 文档管理
- */
+import junjie.fun.mywiki.request.*;
+import junjie.fun.mywiki.response.*;
+import junjie.fun.mywiki.service.*;
+
+/** 文档管理 */
 @Slf4j
 @RestController
 @RequiredArgsConstructor
 public class DocController {
 
-    private final DocService docService;
+  private final DocService docService;
 
-    @PostMapping("/doc/pageDoc")
-    public ResponseVo<Page<DocData>> pageDoc(@Valid @RequestBody PageRequest<PageDocCondition> request) {
-        return ResponseVo.success(docService.pageDoc(request));
-    }
+  /** 分页查询Doc */
+  @PostMapping("/doc/pageDoc")
+  public ResponseVo<PageData<DocData>> pageDoc(@Valid @RequestBody PageDocRequest request) {
+    return ResponseVo.success(docService.pageDoc(request));
+  }
 
-    @PostMapping("/doc/createOrUpdateDoc")
-    public ResponseVo<Long> createOrUpdateDoc(@Valid @RequestBody CreateOrUpdateDocRequest request) {
-        return ResponseVo.success(docService.createOrUpdateDoc(request));
-    }
+  /** 创建Doc */
+  @PostMapping("/doc/createDoc")
+  public ResponseVo<Long> createDoc(@Valid @RequestBody CreateDocRequest request) {
+    return ResponseVo.success(docService.createDoc(request));
+  }
 
-    @PostMapping("/doc/deleteDocs")
-    public ResponseVo<Void> deleteDocs(@RequestBody List<Long> docIds) {
+  /** 更新Doc */
+  @PostMapping("/doc/updateDoc")
+  public ResponseVo<Long> updateDoc(@Valid @RequestBody UpdateDocRequest request) {
+    return ResponseVo.success(docService.updateDoc(request));
+  }
 
-        docService.deleteDocs(docIds);
+  /**
+   * 根据Id查询Doc
+   *
+   * @param docId Doc的主键Id
+   */
+  @PostMapping("/doc/queryDoc")
+  public ResponseVo<DocData> queryDoc(@RequestParam("docId") Long docId) {
 
-        return ResponseVo.success();
-    }
+    List<DocData> docData = docService.queryDocs(Collections.singletonList(docId));
 
-    @PostMapping("/doc/vote")
-    public ResponseVo<Void> vote(@RequestParam("docId") Long docId) {
-        docService.vote(docId);
+    return ResponseVo.success(CollectionUtils.isNotEmpty(docData) ? docData.get(0) : null);
+  }
 
-        return ResponseVo.success();
-    }
+  /**
+   * 根据Id数组批量查询Doc
+   *
+   * @param docIds Doc的主键Id数组
+   */
+  @PostMapping("/doc/queryDocs")
+  public ResponseVo<List<DocData>> queryDocs(@RequestBody List<Long> docIds) {
 
-    @PostMapping("/doc/getContent")
-    public ResponseVo<String> getContent(@RequestParam("docId") Long docId) {
-        return ResponseVo.success(docService.getContent(docId));
-    }
+    return ResponseVo.success(docService.queryDocs(docIds));
+  }
+
+  /**
+   * 根据Id删除Doc
+   *
+   * @param docId Doc的主键Id
+   */
+  @PostMapping("/doc/deleteDoc")
+  public ResponseVo<Long> deleteDoc(@RequestParam("docId") Long docId) {
+    docService.deleteDocs(Collections.singletonList(docId));
+
+    return ResponseVo.success();
+  }
+
+  /**
+   * 根据Id数组批量删除Doc
+   *
+   * @param docIds Doc的主键Id数组
+   */
+  @PostMapping("/doc/deleteDocs")
+  public ResponseVo<Void> deleteDocs(@RequestBody List<Long> docIds) {
+
+    docService.deleteDocs(docIds);
+
+    return ResponseVo.success();
+  }
 }

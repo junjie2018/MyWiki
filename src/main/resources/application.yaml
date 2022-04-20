@@ -12,7 +12,7 @@ spring:
     password: "123456"
   sql:
     init:
-      mode: always
+      mode: never
       schema-locations: classpath:database/scheme.sql
       data-locations: classpath:database/data.sql
 
@@ -35,4 +35,4 @@ spring:
 
 mybatis-plus:
   configuration:
-     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

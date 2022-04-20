@@ -1,20 +1,33 @@
 package junjie.fun.mywiki.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import junjie.fun.mywiki.common.entity.BaseEntity;
+import java.time.LocalDateTime;
+import com.baomidou.mybatisplus.annotation.*;
+import lombok.*;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Doc {
-    private Long id;
-    private Long eBookId;
-    private Long parentId;
-    private String name;
-    private Integer sort;
-    private Integer viewCount;
-    private Integer voteCount;
+@EqualsAndHashCode(callSuper = true)
+@TableName("t_doc")
+public class Doc extends BaseEntity {
+
+  /** 电子书id */
+  private Long ebookId;
+
+  /** 父id */
+  private Long parent;
+
+  /** 名称 */
+  private String name;
+
+  /** 顺序 */
+  private Integer sort;
+
+  /** 阅读数 */
+  private Integer viewCount;
+
+  /** 点赞数 */
+  private Integer voteCount;
 }

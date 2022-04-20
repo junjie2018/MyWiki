@@ -1,7 +1,7 @@
 package junjie.fun.mywiki.utils;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import junjie.fun.mywiki.response.PageData;
+import junjie.fun.mywiki.common.response.PageData;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 

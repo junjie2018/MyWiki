@@ -1,69 +1,96 @@
 package junjie.fun.mywiki.controller;
 
-import junjie.fun.mywiki.request.category.CreateCategoryRequest;
-import junjie.fun.mywiki.request.category.UpdateCategoryRequest;
-import junjie.fun.mywiki.request.ebook.CreateEBookRequest;
-import junjie.fun.mywiki.request.ebook.UpdateEBookRequest;
-import junjie.fun.mywiki.response.ResponseVo;
-import junjie.fun.mywiki.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.web.bind.annotation.*;
+
+import junjie.fun.mywiki.common.response.PageData;
+import junjie.fun.mywiki.common.response.ResponseVo;
 
 import javax.validation.Valid;
+import java.util.Collections;
 import java.util.List;
 
+import junjie.fun.mywiki.request.*;
+import junjie.fun.mywiki.response.*;
+import junjie.fun.mywiki.service.*;
+
+/** 分类管理 */
 @Slf4j
 @RestController
 @RequiredArgsConstructor
 public class CategoryController {
 
-    private final CategoryService categoryService;
+  private final CategoryService categoryService;
 
+  /** 分页查询Category */
+  @PostMapping("/category/pageCategory")
+  public ResponseVo<PageData<CategoryData>> pageCategory(
+      @Valid @RequestBody PageCategoryRequest request) {
+    return ResponseVo.success(categoryService.pageCategory(request));
+  }
 
-    @PostMapping("/category/createCategory")
-    public ResponseVo<Long> createCategory(@Valid @RequestBody CreateCategoryRequest request) {
-        return ResponseVo.success(categoryService.createCategory(request));
-    }
+  /** 创建Category */
+  @PostMapping("/category/createCategory")
+  public ResponseVo<Long> createCategory(@Valid @RequestBody CreateCategoryRequest request) {
+    return ResponseVo.success(categoryService.createCategory(request));
+  }
 
-    /**
-     * 根据Id，删除分类
-     *
-     * @param categoryId categoryId主键
-     */
+  /** 更新Category */
+  @PostMapping("/category/updateCategory")
+  public ResponseVo<Long> updateCategory(@Valid @RequestBody UpdateCategoryRequest request) {
+    return ResponseVo.success(categoryService.updateCategory(request));
+  }
 
-    @PostMapping("/category/deleteCategory")
-    public ResponseVo<Long> deleteCategory(@RequestParam("categoryId") Long categoryId) {
-//        eBookService.deleteEBook(eBookId);
-//
-//        categoryService.removeById(categoryId);
-//
-//        return ResponseVo.success(userId);
-//
-//        return ResponseVo.success(eBookId);
-        return null;
-    }
+  /**
+   * 根据Id查询Category
+   *
+   * @param categoryId Category的主键Id
+   */
+  @PostMapping("/category/queryCategory")
+  public ResponseVo<CategoryData> queryCategory(@RequestParam("categoryId") Long categoryId) {
 
-    /**
-     * 根据Id数组，批量删除分类
-     *
-     * @param categoryIds categoryId数组
-     */
-    @PostMapping("/category/deleteCategories")
-    public ResponseVo<Long> tmp(@RequestBody List<Long> categoryIds) {
-//        eBookService.deleteEBook(eBookId);
-//
-//        return ResponseVo.success(eBookId);
-        return null;
-    }
+    List<CategoryData> categoryData =
+        categoryService.queryCategorys(Collections.singletonList(categoryId));
 
-    @PostMapping("/category/updateCategory")
-    public ResponseVo<Long> updateCategory(@Valid @RequestBody UpdateCategoryRequest request) {
-        return ResponseVo.success(categoryService.updateCategory(request));
-    }
+    return ResponseVo.success(
+        CollectionUtils.isNotEmpty(categoryData) ? categoryData.get(0) : null);
+  }
 
+  /**
+   * 根据Id数组批量查询Category
+   *
+   * @param categoryIds Category的主键Id数组
+   */
+  @PostMapping("/category/queryCategorys")
+  public ResponseVo<List<CategoryData>> queryCategorys(@RequestBody List<Long> categoryIds) {
 
+    return ResponseVo.success(categoryService.queryCategorys(categoryIds));
+  }
+
+  /**
+   * 根据Id删除Category
+   *
+   * @param categoryId Category的主键Id
+   */
+  @PostMapping("/category/deleteCategory")
+  public ResponseVo<Long> deleteCategory(@RequestParam("categoryId") Long categoryId) {
+    categoryService.deleteCategorys(Collections.singletonList(categoryId));
+
+    return ResponseVo.success();
+  }
+
+  /**
+   * 根据Id数组批量删除Category
+   *
+   * @param categoryIds Category的主键Id数组
+   */
+  @PostMapping("/category/deleteCategorys")
+  public ResponseVo<Void> deleteCategorys(@RequestBody List<Long> categoryIds) {
+
+    categoryService.deleteCategorys(categoryIds);
+
+    return ResponseVo.success();
+  }
 }

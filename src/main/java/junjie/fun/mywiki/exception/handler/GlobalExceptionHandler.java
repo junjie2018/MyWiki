@@ -1,24 +1,17 @@
 package junjie.fun.mywiki.exception.handler;
 
-import com.alibaba.fastjson.JSON;
 import junjie.fun.mywiki.exception.BusinessException;
-import junjie.fun.mywiki.response.ResponseVo;
+import junjie.fun.mywiki.common.response.ResponseVo;
 import junjie.fun.mywiki.system.SystemConfig;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
-import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.List;
-import java.util.Map;
 
 import static junjie.fun.mywiki.constant.code.SystemCode.PARAM_CANT_PARSE;
 import static junjie.fun.mywiki.constant.code.SystemCode.PARAM_VALIDATION_WRONG;

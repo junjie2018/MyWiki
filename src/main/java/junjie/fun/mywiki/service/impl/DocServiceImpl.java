@@ -4,141 +4,84 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import junjie.fun.mywiki.entity.Content;
-import junjie.fun.mywiki.entity.Doc;
-import junjie.fun.mywiki.exception.BusinessException;
-import junjie.fun.mywiki.mapper.ContentMapper;
-import junjie.fun.mywiki.mapper.DocMapper;
-import junjie.fun.mywiki.request.PageRequest;
-import junjie.fun.mywiki.request.condition.PageDocCondition;
-import junjie.fun.mywiki.request.doc.CreateOrUpdateDocRequest;
-import junjie.fun.mywiki.response.data.DocData;
-import junjie.fun.mywiki.service.DocService;
+
+import junjie.fun.mywiki.common.response.PageData;
 import junjie.fun.mywiki.utils.CopyUtils;
-import junjie.fun.mywiki.context.RequestContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ObjectUtils;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
-import java.time.Duration;
 import java.util.List;
 
-import static junjie.fun.mywiki.constant.code.BusinessCode.HAS_ALREADY_VOTE;
-import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
+import junjie.fun.mywiki.request.*;
+import junjie.fun.mywiki.response.*;
+import junjie.fun.mywiki.entity.*;
+import junjie.fun.mywiki.service.*;
+import junjie.fun.mywiki.mapper.*;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class DocServiceImpl extends ServiceImpl<DocMapper, Doc> implements DocService {
 
-    private final ContentMapper contentMapper;
-    private final StringRedisTemplate stringRedisTemplate;
+  @Override
+  public Long createDoc(CreateDocRequest request) {
+    Doc eBookInert =
+        Doc.builder()
+            .ebookId(request.getEbookId())
+            .parent(request.getParent())
+            .name(request.getName())
+            .sort(request.getSort())
+            .viewCount(request.getViewCount())
+            .voteCount(request.getVoteCount())
+            .build();
 
-    public Page<DocData> pageDoc(PageRequest<PageDocCondition> request) {
-        PageDocCondition condition = request.getCondition() == null ?
-                new PageDocCondition() :
-                request.getCondition();
+    this.baseMapper.insert(eBookInert);
 
-        Page<Doc> pageEntity = new Page<>(request.getCurrent(), request.getSize());
+    return eBookInert.getId();
+  }
 
-        LambdaQueryWrapper<Doc> queryWrapper = new LambdaQueryWrapper<Doc>()
-                .eq(ObjectUtils.isNotEmpty(condition.getEBookId()), Doc::getEBookId, condition.getEBookId());
+  @Override
+  public void deleteDocs(List<Long> docIds) {
+    this.baseMapper.deleteBatchIds(docIds);
+  }
 
-        baseMapper.selectPage(pageEntity, queryWrapper);
+  @Override
+  public Long updateDoc(UpdateDocRequest request) {
+    LambdaUpdateWrapper<Doc> updateWrapper =
+        new LambdaUpdateWrapper<Doc>()
+            .eq(Doc::getId, request.getId())
+            .set(Doc::getEbookId, request.getEbookId())
+            .set(Doc::getParent, request.getParent())
+            .set(Doc::getName, request.getName())
+            .set(Doc::getSort, request.getSort())
+            .set(Doc::getViewCount, request.getViewCount())
+            .set(Doc::getVoteCount, request.getVoteCount());
 
-        return CopyUtils.copyPage(pageEntity, DocData.class);
-    }
+    this.baseMapper.update(null, updateWrapper);
 
-    public Long createOrUpdateDoc(CreateOrUpdateDocRequest request) {
-        if (isNotEmpty(request.getId())) {
-            // 更新文档
-            LambdaUpdateWrapper<Doc> updateWrapperForDoc = new LambdaUpdateWrapper<Doc>()
-                    .eq(Doc::getId, request.getId())
-                    .set(Doc::getEBookId, request.getEbookId())
-                    .set(Doc::getParentId, request.getParentId())
-                    .set(Doc::getName, request.getName())
-                    .set(Doc::getSort, request.getSort())
-                    .set(Doc::getViewCount, request.getViewCount())
-                    .set(Doc::getVoteCount, request.getVoteCount());
+    return request.getId();
+  }
 
-            this.baseMapper.update(null, updateWrapperForDoc);
+  @Override
+  public PageData<DocData> pageDoc(PageDocRequest request) {
 
-            // 更新内容
-            LambdaUpdateWrapper<Content> updateWrapperForContent = new LambdaUpdateWrapper<Content>()
-                    .eq(Content::getDocId, request.getId())
-                    .set(Content::getEBookId, request.getEbookId())
-                    .set(Content::getContent, request.getContent());
+    Page<Doc> pageEntity = request.getPage(Doc.class);
+    PageDocRequest.Condition condition = request.getCondition();
 
-            contentMapper.update(null, updateWrapperForContent);
+    LambdaQueryWrapper<Doc> queryWrapper =
+        new LambdaQueryWrapper<Doc>().orderByDesc(Doc::getCreateTime);
 
-            return request.getId();
-        } else {
-            Doc docInert = Doc.builder()
-                    .eBookId(request.getEbookId())
-                    .parentId(request.getParentId())
-                    .name(request.getName())
-                    .sort(request.getSort())
-                    .viewCount(request.getViewCount())
-                    .voteCount(request.getVoteCount())
-                    .build();
+    baseMapper.selectPage(pageEntity, queryWrapper);
 
-            this.baseMapper.insert(docInert);
+    return CopyUtils.copyPageData(pageEntity, DocData.class);
+  }
 
-            Content contentInsert = Content.builder()
-                    .eBookId(request.getEbookId())
-                    .docId(docInert.getId())
-                    .content(request.getContent())
-                    .build();
+  @Override
+  public List<DocData> queryDocs(List<Long> docIds) {
 
-            contentMapper.insert(contentInsert);
+    LambdaQueryWrapper<Doc> queryWrapper = new LambdaQueryWrapper<Doc>().in(Doc::getId, docIds);
 
-            return docInert.getId();
-        }
-    }
-
-    @Override
-    public void deleteDocs(List<Long> docIds) {
-        // 删除关联的内容
-        LambdaQueryWrapper<Content> contentDelete = new LambdaQueryWrapper<Content>()
-                .in(Content::getDocId, docIds);
-
-        contentMapper.delete(contentDelete);
-
-        // 删除文档
-        this.baseMapper.deleteBatchIds(docIds);
-    }
-
-    @Override
-    public void vote(Long docId) {
-        String ip = RequestContext.getRemoteAddress();
-
-        String redisKey = String.format("vote:%s:%s", docId, ip);
-        if (Boolean.TRUE.equals(stringRedisTemplate.hasKey(redisKey))) {
-            throw new BusinessException(HAS_ALREADY_VOTE);
-        } else {
-            this.baseMapper.increaseVoteCount(docId);
-
-            // 5000秒后可再次操作
-            stringRedisTemplate.opsForValue().set(redisKey, redisKey, Duration.ofSeconds(5000));
-        }
-
-
-        // 推送消息
-        // todo 这部分稍后再写
-    }
-
-    @Override
-    public String getContent(Long docId) {
-        LambdaQueryWrapper<Content> queryWrapper = new LambdaQueryWrapper<Content>()
-                .eq(Content::getDocId, docId)
-                .select(Content::getContent);
-
-        this.baseMapper.increaseViewCount(docId);
-
-        Content content = contentMapper.selectOne(queryWrapper);
-
-        return content.getContent();
-    }
+    return CopyUtils.copyList(baseMapper.selectList(queryWrapper), DocData.class);
+  }
 }

@@ -1,19 +1,24 @@
 package junjie.fun.mywiki.entity;
 
-import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import junjie.fun.mywiki.common.entity.BaseEntity;
+import java.time.LocalDateTime;
+import com.baomidou.mybatisplus.annotation.*;
+import lombok.*;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@TableName("category")
-public class Category {
-    private Long id;
-    private Long parentId;
-    private String name;
-    private Integer sort;
+@EqualsAndHashCode(callSuper = true)
+@TableName("t_category")
+public class Category extends BaseEntity {
+
+  /** 父id */
+  private Long parent;
+
+  /** 名称 */
+  private String name;
+
+  /** 顺序 */
+  private Integer sort;
 }
